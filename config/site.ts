@@ -2,7 +2,7 @@ export type SiteConfig = typeof siteConfig;
 
 export const siteConfig = {
   name: "Next.js + NextUI",
-  description: "Abastos F1 Test",
+  description: "Abastos F1 Develop",
   navItems: [
     {
       label: "Home",
