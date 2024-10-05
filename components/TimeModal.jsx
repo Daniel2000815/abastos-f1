@@ -5,8 +5,12 @@ import { users, tracks, modes } from "@/config/static-data";
 import {Spinner} from "@nextui-org/react";
 import {addTime} from "@/utils/dbUtils";
 import React from "react";
+import { useTime } from '@/components/TimeContext';
+
 
 export default function App() {
+  const { times, addNewTime } = useTime();  // Obtener los tiempos del contexto
+
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const [user, setUser] = React.useState("");
   const [track, setTrack] = React.useState("");
@@ -14,22 +18,13 @@ export default function App() {
   const [time, setTime] = React.useState(-1);
   const [isSaving, setIsSaving] = React.useState(false); // Estado para controlar la subida de datos
 
-  // Simulación de subida de datos asíncrona
-  const uploadData = async () => {
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        resolve("Datos subidos correctamente");
-      }, 2000); // Simulación de 2 segundos
-    });
-  };
-
   // Función para manejar la acción de guardar
   const handleSave = async (onClose) => {
     setIsSaving(true); // Cambiar el estado a "guardando"
 
     try {
       // await uploadData(); // Subir los datos de manera asíncrona
-      await addTime(time, user, track, mode);
+      await addNewTime(time, user, track, mode);
       onClose(); // Cerrar el modal al finalizar la subida
     } catch (error) {
       console.error("Error al subir los datos:", error);

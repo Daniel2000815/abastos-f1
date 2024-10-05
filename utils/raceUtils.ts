@@ -11,9 +11,6 @@ export function secondsToTimeString(seconds: number) {
 }
 
 export function timeStringToSeconds(timeString: string) {
-    if(typeof(timeString) !== typeof(String))
-        return 0;
-
     var splited = timeString.split(":")
     if(splited.length != 3)
         throw new Error(`Time string ${timeString} is not in valid format`);
