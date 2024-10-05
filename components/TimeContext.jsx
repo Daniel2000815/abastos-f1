@@ -12,20 +12,31 @@ export const TimeProvider = ({ children }) => {
   // Función para añadir un nuevo tiempo
   const addNewTime = async (timeSeconds, user, track, mode) => {
     try {
-        console.log("adding time ", timeSeconds);
-      const docRef = await addDoc(collection(db, "times"), {
-        user: user,
-        time: timeSeconds,
-        track: track,
-        mode: mode,
-        date: serverTimestamp(),
-      });
-      return docRef.id;
+        const newTime = {
+            user: user,
+            time: timeSeconds,
+            track: track,
+            mode: mode,
+            date: new Date(),
+        };
+
+        const docRef = await addDoc(collection(db, "times"), newTime);
+
+        // Añadimos el ID al nuevo objeto
+        const newTimeWithId = {
+            ...newTime,
+            id: docRef.id,  // Añadimos el ID del documento
+        };
+
+        setTimes(prevTimes => [...prevTimes, newTimeWithId]); // Actualizamos el estado
+
+        return docRef.id;
     } catch (e) {
-      console.error("Error adding document: ", e);
-      throw new Error("Error adding document " + e);
+        console.error("Error adding document: ", e);
+        throw new Error("Error adding document " + e);
     }
-  };
+};
+
 
   // Función para descargar los tiempos
   const fetchTimes = async () => {
@@ -35,6 +46,7 @@ export const TimeProvider = ({ children }) => {
         id: doc.id,
         ...doc.data(),
       }));
+      console.log(fetchTimes)
       setTimes(fetchedTimes);  // Guardamos los tiempos en el estado
     } catch (error) {
       console.error("Error fetching times data:", error);

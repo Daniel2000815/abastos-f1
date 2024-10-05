@@ -59,7 +59,7 @@ export default function TimeTable() {
   const [rowsPerPage, setRowsPerPage] = React.useState(15);
   const [sortDescriptor, setSortDescriptor] = React.useState<SortDescriptor>({
     column: "name",
-    direction: "ascending",
+    direction: "descending",
   });
 
   const [page, setPage] = React.useState(1);
@@ -113,6 +113,7 @@ export default function TimeTable() {
 
   const renderCell = React.useCallback((user: User, columnKey: React.Key) => {
     const cellValue = user[columnKey as keyof User];
+    console.log("rendering ", user)
     switch (columnKey) {
       case "user":
         return (
@@ -124,7 +125,7 @@ export default function TimeTable() {
             // description={user.date?.toDate().toLocaleString()}
             name={cellValue}
           >
-            {user.date?.toDate().toLocaleString()}
+            {user.date?.toLocaleString()}
           </User>
         );
       case "track":
@@ -163,7 +164,7 @@ export default function TimeTable() {
         );
       case "date":
         return (
-          <p>{cellValue.toDate().toLocaleDateString()}</p>
+          <p>{cellValue instanceof Date ? cellValue.toLocaleDateString() : cellValue.toDate().toLocaleDateString()}</p>
         )
       case "time":
         return (
