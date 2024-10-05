@@ -51,13 +51,12 @@ const INITIAL_VISIBLE_COLUMNS = ["user", "date", "time", "track", "mode", "actio
 export default function TimeTable() {
   const { times } = useTime();  // Obtener los tiempos del contexto
   type User = typeof times[0];
-  console.log("Tiempos desde el contexto:", times);
 
   const [filterValue, setFilterValue] = React.useState("");
   const [selectedKeys, setSelectedKeys] = React.useState<Selection>(new Set([]));
   const [visibleColumns, setVisibleColumns] = React.useState<Selection>(new Set(INITIAL_VISIBLE_COLUMNS));
   const [modeFilter, setModeFilter] = React.useState<Selection>("all");
-  const [rowsPerPage, setRowsPerPage] = React.useState(5);
+  const [rowsPerPage, setRowsPerPage] = React.useState(15);
   const [sortDescriptor, setSortDescriptor] = React.useState<SortDescriptor>({
     column: "name",
     direction: "ascending",
@@ -106,13 +105,6 @@ export default function TimeTable() {
       var first =  a[sortDescriptor.column as keyof User];
       var second = b[sortDescriptor.column as keyof User];
 
-      console.log(first, second);
-      // if(sortDescriptor.column==="time"){
-      //   first = timeStringToSeconds(first)
-      //   second = timeStringToSeconds(second)
-      // }
-
-      console.log(first, second);
       const cmp = first < second ? -1 : first > second ? 1 : 0;
 
       return sortDescriptor.direction === "descending" ? -cmp : cmp;
@@ -132,7 +124,7 @@ export default function TimeTable() {
             // description={user.date?.toDate().toLocaleString()}
             name={cellValue}
           >
-            {/* {user.date?.toDate().toLocaleString()} */}
+            {user.date?.toDate().toLocaleString()}
           </User>
         );
       case "track":
@@ -270,7 +262,7 @@ export default function TimeTable() {
           </div>
         </div>
         <div className="flex justify-between items-center">
-          <span className="text-default-400 text-small">Total {times.length} times</span>
+          <span className="text-default-400 text-small">Total {times.length}</span>
           <label className="flex items-center text-default-400 text-small">
             Rows per page:
             <select
