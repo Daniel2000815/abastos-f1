@@ -76,21 +76,21 @@ export default function TimeTable() {
   }, [visibleColumns]);
 
   const filteredItems = React.useMemo(() => {
-    let filteredUsers = [...times];
+    let filteredTimes = [...times];
 
     if (hasSearchFilter) {
-      filteredUsers = filteredUsers.filter((user) =>
-        user.name.toLowerCase().includes(filterValue.toLowerCase()),
+      filteredTimes = filteredTimes.filter((time) =>
+        [time.user, time.track].map(u => u.toLowerCase()).some(u => u.includes(filterValue.toLowerCase())),
       );
     }
     if (modeFilter !== "all" && Array.from(modeFilter).length !== modes.length) {
-      console.log(modeFilter , filteredUsers)
-      filteredUsers = filteredUsers.filter((user) =>
+      console.log(modeFilter , filteredTimes)
+      filteredTimes = filteredTimes.filter((user) =>
         Array.from(modeFilter).includes(user.mode.toLowerCase()),
       );
     }
 
-    return filteredUsers;
+    return filteredTimes;
   }, [times, filterValue, modeFilter]);
 
   const items = React.useMemo(() => {
@@ -207,7 +207,7 @@ export default function TimeTable() {
               base: "w-full sm:max-w-[44%]",
               inputWrapper: "border-1",
             }}
-            placeholder="Search by name..."
+            placeholder="Search by name or track..."
             size="sm"
             startContent={<SearchIcon className="text-default-300" />}
             value={filterValue}
