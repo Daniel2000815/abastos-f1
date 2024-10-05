@@ -84,8 +84,9 @@ export default function TimeTable() {
       );
     }
     if (modeFilter !== "all" && Array.from(modeFilter).length !== modes.length) {
+      console.log(modeFilter , filteredUsers)
       filteredUsers = filteredUsers.filter((user) =>
-        Array.from(modeFilter).includes(user.mode),
+        Array.from(modeFilter).includes(user.mode.toLowerCase()),
       );
     }
 

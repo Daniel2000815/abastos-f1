@@ -39,7 +39,7 @@ const users = [
 
   const modes = [
     {
-      key: "free",
+      key: "practice",
       label: "Practice",
     },
     {
