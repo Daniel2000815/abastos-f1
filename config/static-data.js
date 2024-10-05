@@ -40,7 +40,7 @@ const users = [
   const modes = [
     {
       key: "free",
-      label: "Free practice",
+      label: "Practice",
     },
     {
       key: "quali",

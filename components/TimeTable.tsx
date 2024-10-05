@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext } from 'react';
 import {
   Table,
   TableHeader,
@@ -18,78 +18,54 @@ import {
   Selection,
   ChipProps,
   SortDescriptor,
-  useDisclosure
 } from "@nextui-org/react";
-import {PlusIcon} from "../icons/PlusIcon";
-import {VerticalDotsIcon} from "../icons/VerticalDotsIcon";
-import {ChevronDownIcon} from "../icons/ChevronDownIcon";
-import {SearchIcon} from "../icons/SearchIcon";
-import {capitalize} from "../utils/stringUtils";
+import { useTime } from '@/components/TimeContext';
+
+import { modes } from '@/config/static-data';
+
+import { VerticalDotsIcon } from "../icons/VerticalDotsIcon";
+import { ChevronDownIcon } from "../icons/ChevronDownIcon";
+import { SearchIcon } from "../icons/SearchIcon";
+import { capitalize } from "../utils/stringUtils";
 import TimeModal from "./TimeModal";
+import { secondsToTimeString, timeStringToSeconds } from '@/utils/raceUtils';
 
 const columns = [
-    {name: "ID", uid: "id", sortable: true},
-    {name: "NAME", uid: "name", sortable: true},
-    {name: "TIME", uid: "time", sortable: true},
-    {name: "TRACK", uid: "track", sortable: true},
-    {name: "TEAM", uid: "team"},
-    {name: "DATE", uid: "date"},
-    {name: "STATUS", uid: "status", sortable: true},
-    {name: "ACTIONS", uid: "actions"},
-  ];
-  
-  const statusOptions = [
-    {name: "Active", uid: "active"},
-    {name: "Paused", uid: "paused"},
-    {name: "Vacation", uid: "vacation"},
-  ];
-  
-  const users = [
-    {
-      id: 1,
-      name: "Tony Reichert",
-      track: "Monza",
-      team: "Management",
-      status: "active",
-      time: "29",
-      avatar: "https://i.pravatar.cc/150?u=a042581f4e29026024d",
-      date: "tony.reichert@example.com",
-    },
-    {
-      id: 2,
-      name: "Zoey Lang",
-      track: "Monza",
-      team: "Development",
-      status: "paused",
-      time: "25",
-      avatar: "https://i.pravatar.cc/150?u=a042581f4e29026704d",
-      date: "zoey.lang@example.com",
-    }
-]
-const statusColorMap: Record<string, ChipProps["color"]> = {
-  active: "success",
-  paused: "danger",
-  vacation: "warning",
+  { name: "PILOT", uid: "user", sortable: true },
+  { name: "TIME", uid: "time", sortable: true },
+  { name: "TRACK", uid: "track", sortable: true },
+  { name: "DATE", uid: "date", sortable: true },
+  { name: "MODE", uid: "mode", sortable: true },
+  { name: "ACTIONS", uid: "actions" },
+];
+
+const modeColorMap: Record<string, ChipProps["color"]> = {
+  "Practice": "success",
+  "Race": "danger",
+  "Quali": "warning",
 };
 
-const INITIAL_VISIBLE_COLUMNS = ["name", "date", "age", "time", "track", "status", "actions"];
+const INITIAL_VISIBLE_COLUMNS = ["user", "date", "time", "track", "mode", "actions"];
 
-type User = typeof users[0];
 
 export default function TimeTable() {
+  const { times } = useTime();  // Obtener los tiempos del contexto
+  type User = typeof times[0];
+  console.log("Tiempos desde el contexto:", times);
+
   const [filterValue, setFilterValue] = React.useState("");
   const [selectedKeys, setSelectedKeys] = React.useState<Selection>(new Set([]));
   const [visibleColumns, setVisibleColumns] = React.useState<Selection>(new Set(INITIAL_VISIBLE_COLUMNS));
-  const [statusFilter, setStatusFilter] = React.useState<Selection>("all");
+  const [modeFilter, setModeFilter] = React.useState<Selection>("all");
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const [sortDescriptor, setSortDescriptor] = React.useState<SortDescriptor>({
-    column: "age",
+    column: "name",
     direction: "ascending",
   });
-  const {isOpen, onOpen, onOpenChange} = useDisclosure();
+
   const [page, setPage] = React.useState(1);
 
-  const pages = Math.ceil(users.length / rowsPerPage);
+  const pages = Math.ceil(times.length / rowsPerPage);
 
   const hasSearchFilter = Boolean(filterValue);
 
@@ -100,21 +76,21 @@ export default function TimeTable() {
   }, [visibleColumns]);
 
   const filteredItems = React.useMemo(() => {
-    let filteredUsers = [...users];
+    let filteredUsers = [...times];
 
     if (hasSearchFilter) {
       filteredUsers = filteredUsers.filter((user) =>
         user.name.toLowerCase().includes(filterValue.toLowerCase()),
       );
     }
-    if (statusFilter !== "all" && Array.from(statusFilter).length !== statusOptions.length) {
+    if (modeFilter !== "all" && Array.from(modeFilter).length !== modes.length) {
       filteredUsers = filteredUsers.filter((user) =>
-        Array.from(statusFilter).includes(user.status),
+        Array.from(modeFilter).includes(user.mode),
       );
     }
 
     return filteredUsers;
-  }, [users, filterValue, statusFilter]);
+  }, [times, filterValue, modeFilter]);
 
   const items = React.useMemo(() => {
     const start = (page - 1) * rowsPerPage;
@@ -125,8 +101,17 @@ export default function TimeTable() {
 
   const sortedItems = React.useMemo(() => {
     return [...items].sort((a: User, b: User) => {
-      const first = a[sortDescriptor.column as keyof User] as number;
-      const second = b[sortDescriptor.column as keyof User] as number;
+
+      var first =  a[sortDescriptor.column as keyof User];
+      var second = b[sortDescriptor.column as keyof User];
+
+      console.log(first, second);
+      // if(sortDescriptor.column==="time"){
+      //   first = timeStringToSeconds(first)
+      //   second = timeStringToSeconds(second)
+      // }
+
+      console.log(first, second);
       const cmp = first < second ? -1 : first > second ? 1 : 0;
 
       return sortDescriptor.direction === "descending" ? -cmp : cmp;
@@ -135,19 +120,18 @@ export default function TimeTable() {
 
   const renderCell = React.useCallback((user: User, columnKey: React.Key) => {
     const cellValue = user[columnKey as keyof User];
-
     switch (columnKey) {
-      case "name":
+      case "user":
         return (
           <User
-            avatarProps={{radius: "full", size: "sm", src: user.avatar}}
+            avatarProps={{ radius: "full", size: "sm", src: "https://i.pravatar.cc/150?u=a042581f4e29026024d" }}
             classNames={{
               description: "text-default-500",
             }}
-            description={user.date}
+            // description={user.date?.toDate().toLocaleString()}
             name={cellValue}
           >
-            {user.date}
+            {/* {user.date?.toDate().toLocaleString()} */}
           </User>
         );
       case "track":
@@ -157,11 +141,11 @@ export default function TimeTable() {
             <p className="text-bold text-tiny capitalize text-default-500">Sunny</p>
           </div>
         );
-      case "status":
+      case "mode":
         return (
           <Chip
             className="capitalize border-none gap-1 text-default-600"
-            color={statusColorMap[user.status]}
+            color={modeColorMap[user.mode]}
             size="sm"
             variant="dot"
           >
@@ -178,18 +162,25 @@ export default function TimeTable() {
                 </Button>
               </DropdownTrigger>
               <DropdownMenu>
-                <DropdownItem>View</DropdownItem>
                 <DropdownItem>Edit</DropdownItem>
                 <DropdownItem>Delete</DropdownItem>
               </DropdownMenu>
             </Dropdown>
           </div>
         );
+      case "date":
+        return (
+          <p>{cellValue.toDate().toLocaleDateString()}</p>
+        )
+      case "time":
+        return (
+          <p>{secondsToTimeString(cellValue)}</p>
+        )
       default:
-        return cellValue;
+        return cellValue
     }
   }, []);
-  
+
 
   const onRowsPerPageChange = React.useCallback((e: React.ChangeEvent<HTMLSelectElement>) => {
     setRowsPerPage(Number(e.target.value));
@@ -231,20 +222,20 @@ export default function TimeTable() {
                   size="sm"
                   variant="flat"
                 >
-                  Status
+                  Mode
                 </Button>
               </DropdownTrigger>
               <DropdownMenu
                 disallowEmptySelection
                 aria-label="Table Columns"
                 closeOnSelect={false}
-                selectedKeys={statusFilter}
+                selectedKeys={modeFilter}
                 selectionMode="multiple"
-                onSelectionChange={setStatusFilter}
+                onSelectionChange={setModeFilter}
               >
-                {statusOptions.map((status) => (
-                  <DropdownItem key={status.uid} className="capitalize">
-                    {capitalize(status.name)}
+                {modes.map((mode) => (
+                  <DropdownItem key={mode.key} className="capitalize">
+                    {capitalize(mode.label)}
                   </DropdownItem>
                 ))}
               </DropdownMenu>
@@ -274,11 +265,11 @@ export default function TimeTable() {
                 ))}
               </DropdownMenu>
             </Dropdown>
-            <TimeModal/>
+            <TimeModal />
           </div>
         </div>
         <div className="flex justify-between items-center">
-          <span className="text-default-400 text-small">Total {users.length} users</span>
+          <span className="text-default-400 text-small">Total {times.length} times</span>
           <label className="flex items-center text-default-400 text-small">
             Rows per page:
             <select
@@ -295,11 +286,11 @@ export default function TimeTable() {
     );
   }, [
     filterValue,
-    statusFilter,
+    modeFilter,
     visibleColumns,
     onSearchChange,
     onRowsPerPageChange,
-    users.length,
+    times.length,
     hasSearchFilter,
   ]);
 
@@ -348,7 +339,7 @@ export default function TimeTable() {
 
   return (
     <Table
-      
+
       removeWrapper
       aria-label="Time table"
       bottomContent={bottomContent}
@@ -371,7 +362,7 @@ export default function TimeTable() {
           </TableColumn>
         )}
       </TableHeader>
-      <TableBody emptyContent={"No users found"} items={sortedItems}>
+      <TableBody emptyContent={"No times found"} items={sortedItems}>
         {(item) => (
           <TableRow key={item.id}>
             {(columnKey) => <TableCell>{renderCell(item, columnKey)}</TableCell>}

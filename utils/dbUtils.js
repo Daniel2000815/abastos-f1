@@ -2,23 +2,17 @@
 import { app, db } from "@/config/firebase";
 import { collection, getDocs, getDoc, addDoc, setDoc, doc, serverTimestamp, where, query} from "firebase/firestore";
 
-const fetchData = async () => {
+const fetchTimes = async () => {
     try {
-        setLoading(true); // Activa el estado de carga
-        setError(null); // Resetea el estado de error
-
         const querySnapshot = await getDocs(collection(db, "times"));
-        const usersData = querySnapshot.docs.map(doc => ({
+        const data = querySnapshot.docs.map(doc => ({
             id: doc.id,
             ...doc.data(),
         }));
 
-        setUsers(usersData); // Actualiza el estado con los datos obtenidos
+        return data;
     } catch (error) {
-        console.error("Error fetching data:", error);
-        setError("Error al cargar los usuarios"); // Si hay un error, actualiza el estado
-    } finally {
-        setLoading(false); // Desactiva el estado de carga
+        console.error("Error fetching times data:", error);
     }
 };
 
