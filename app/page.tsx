@@ -1,9 +1,7 @@
-"use client";
-
 import React from "react";
 import { ChartTest } from "../components/chart";
+import ApexChart from "@/components/ApexChart";
 import TimeTable from "../components/TimeTable";
-import TimeTable2 from "../components/TimeTable2";
 
 import { TimeProvider } from "@/components/TimeContext";
 

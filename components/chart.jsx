@@ -1,4 +1,5 @@
-import Chart from "react-apexcharts";
+// import Chart from "react-apexcharts";
+import ApexChart from "@/components/ApexChart";
 
 export const ChartTest = () => {
     const options = {
@@ -14,12 +15,7 @@ export const ChartTest = () => {
         },
         xaxis: {
           type: 'datetime',
-          categories: ["2018-09-19T00:00:00.000Z", "2018-09-19T01:30:00.000Z", "2018-09-19T02:30:00.000Z", "2018-09-19T03:30:00.000Z", "2018-09-19T04:30:00.000Z", "2018-09-19T05:30:00.000Z", "2018-09-19T06:30:00.000Z"],
-          // labels: {
-          //   formatter: function (value) {
-          //     return value;
-          //   }
-          // }
+          categories: ["2018-09-19T00:00:00.000Z", "2018-09-19T01:30:00.000Z", "2018-09-19T02:30:00.000Z", "2018-09-19T03:30:00.000Z", "2018-09-19T04:30:00.000Z", "2018-09-19T05:30:00.000Z", "2018-09-19T06:30:00.000Z"]
         },
         tooltip: {
           x: {
@@ -37,7 +33,7 @@ export const ChartTest = () => {
       }];
 
     return (
-        <Chart
+        <ApexChart
             options={options}
             series={series}
             type="area"

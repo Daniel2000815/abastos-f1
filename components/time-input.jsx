@@ -1,3 +1,5 @@
+"use client"
+
 import React, { useState, useEffect } from 'react';
 import { Input } from "@nextui-org/input";
 import { timeStringToSeconds } from '@/utils/raceUtils';
