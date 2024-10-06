@@ -12,14 +12,14 @@ export const TimeProvider = ({ children }) => {
   const [times, setTimes] = useState([]);
 
   // Función para añadir un nuevo tiempo
-  const addNewTime = async (timeSeconds, user, track, mode) => {
+  const addNewTime = async (timeSeconds, user, track, mode, date) => {
     try {
         const newTime = {
             user: user,
             time: timeSeconds,
             track: track,
             mode: mode,
-            date: new Date(),
+            date: date,
         };
 
         const docRef = await addDoc(collection(db, "times"), newTime);

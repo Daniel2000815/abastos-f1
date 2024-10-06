@@ -6,6 +6,9 @@ import {Spinner} from "@nextui-org/react";
 import {addTime} from "@/utils/dbUtils";
 import React from "react";
 import { useTime } from '@/components/TimeContext';
+import {DateInput} from "@nextui-org/react";
+import {DateValue, parseDate, getLocalTimeZone, today} from "@internationalized/date";
+import {useDateFormatter} from "@react-aria/i18n";
 
 
 export default function App() {
@@ -16,6 +19,9 @@ export default function App() {
   const [track, setTrack] = React.useState("");
   const [mode, setMode] = React.useState("");
   const [time, setTime] = React.useState(-1);
+  const [date, setDate] = React.useState(parseDate((new Date()).toISOString().slice(0,10))); // Inicializa DateValue correctamente
+
+  let formatter = useDateFormatter({dateStyle: "full"});
   const [isSaving, setIsSaving] = React.useState(false); // Estado para controlar la subida de datos
 
   // Función para manejar la acción de guardar
@@ -24,7 +30,7 @@ export default function App() {
 
     try {
       // await uploadData(); // Subir los datos de manera asíncrona
-      await addNewTime(time, user, track, mode);
+      await addNewTime(time, user, track, mode, date.toDate());
       onClose(); // Cerrar el modal al finalizar la subida
     } catch (error) {
       console.error("Error al subir los datos:", error);
@@ -105,6 +111,8 @@ export default function App() {
                     )}
                   </DropdownMenu>
                 </Dropdown>
+
+                <DateInput label="Date" value={date} onChange={setDate} />
               </ModalBody>
               <ModalFooter>
                 <Button color="danger" variant="flat" onPress={onClose}>
