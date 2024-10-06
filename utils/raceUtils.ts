@@ -7,7 +7,8 @@ export function secondsToTimeString(seconds: number) {
     seconds = seconds%60;
     var miliseconds = (seconds%1).toFixed(3).slice(2);
 
-    return `${minutes}:${Math.floor(seconds/1)}:${miliseconds}`
+    seconds = Math.floor(seconds/1)
+    return `${minutes}:${seconds<10 ? "0"+seconds.toString() : seconds}:${miliseconds}`
 }
 
 export function timeStringToSeconds(timeString: string) {

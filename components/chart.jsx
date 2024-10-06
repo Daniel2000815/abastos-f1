@@ -1,11 +1,51 @@
-// import Chart from "react-apexcharts";
+'use client'
 import ApexChart from "@/components/ApexChart";
+import { useTime } from '@/components/TimeContext';
+import { users } from "@/config/static-data";
+import { secondsToTimeString } from "@/utils/raceUtils";
+import { useState, useEffect } from 'react';
 
 export const ChartTest = () => {
-    const options = {
+  const { times = [] } = useTime();
+  const [series, setSeries] = useState([]);
+
+  // Recalcula las series cada vez que cambie 'times'
+  useEffect(() => {
+    const newSeries = users.map(u => ({
+      name: u.label,
+      data: times.filter(t => t.user === u.label).map(tu => tu.time)
+    })).filter(e => e.data.length !== 0);
+
+    setSeries(newSeries);
+  }, [times]); // El efecto se ejecutará cada vez que cambie 'times'
+
+  return (
+    <ApexChart
+      options={{
+        markers: {
+          size: 10,
+          colors: undefined,
+          strokeColors: '#fff',
+          strokeWidth: 2,
+          strokeOpacity: 0.9,
+          strokeDashArray: 0,
+          fillOpacity: 1,
+          discrete: [],
+          shape: "circle",
+          offsetX: 0,
+          offsetY: 0,
+          onClick: undefined,
+          onDblClick: undefined,
+          showNullDataPoints: true,
+          hover: {
+            size: undefined,
+            sizeOffset: 3
+          }
+        },
         chart: {
           height: 350,
-          type: 'area'
+          type: 'area',
+          stacked: false
         },
         dataLabels: {
           enabled: false
@@ -14,30 +54,25 @@ export const ChartTest = () => {
           curve: 'smooth'
         },
         xaxis: {
-          type: 'datetime',
-          categories: ["2018-09-19T00:00:00.000Z", "2018-09-19T01:30:00.000Z", "2018-09-19T02:30:00.000Z", "2018-09-19T03:30:00.000Z", "2018-09-19T04:30:00.000Z", "2018-09-19T05:30:00.000Z", "2018-09-19T06:30:00.000Z"]
+          categories: times.map(t => t.date instanceof Date ? t.date.toLocaleDateString() : t.date?.toDate().toLocaleDateString())
+        },
+        yaxis: {
+          min: 0,
+          labels: {
+            formatter: function (value) {
+              return secondsToTimeString(value);
+            }
+          }
         },
         tooltip: {
           x: {
             format: 'dd/MM/yy HH:mm'
           },
         },
-      };
-
-    const series = [{
-        name: 'series1',
-        data: [31, 40, 28, 51, 42, 109, 100]
-      }, {
-        name: 'series2',
-        data: [11, 32, 45, 32, 34, 52, 41]
-      }];
-
-    return (
-        <ApexChart
-            options={options}
-            series={series}
-            type="area"
-            width="500"
-        />
-    )
+      }}
+      series={series}  // Usamos la serie generada en el useEffect
+      type="area"
+      width="100%"
+    />
+  )
 }

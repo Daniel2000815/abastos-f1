@@ -1,24 +1,31 @@
+import { avatar } from "@nextui-org/theme";
+
 const users = [
     {
       key: "dan",
       label: "Dani",
+      avatar: "https://api.dicebear.com/9.x/bottts-neutral/svg?seed=Sarah"
     },
     {
       key: "cac",
       label: "Cacabera",
+      avatar: "https://api.dicebear.com/9.x/bottts-neutral/svg?seed=Jude"
     },
     {
       key: "aca",
       label: "Aca",
+      avatar: "https://api.dicebear.com/9.x/bottts-neutral/svg?seed=Brian"
     },
     {
       key: "pab",
       label: "Pabloca",
+      avatar: "https://api.dicebear.com/9.x/bottts-neutral/svg?seed=Luis"
     },
     ,
     {
       key: "jav",
       label: "Seon",
+      avatar: "https://api.dicebear.com/9.x/bottts-neutral/svg?seed=Destiny"
     }
   ];
 

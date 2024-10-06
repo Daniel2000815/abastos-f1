@@ -23,7 +23,7 @@ import {
 } from "@nextui-org/react";
 import { useTime } from '@/components/TimeContext';
 
-import { modes } from '@/config/static-data';
+import { modes, users } from '@/config/static-data';
 
 import { VerticalDotsIcon } from "../icons/VerticalDotsIcon";
 import { ChevronDownIcon } from "../icons/ChevronDownIcon";
@@ -120,7 +120,7 @@ export default function TimeTable() {
       case "user":
         return (
           <User
-            avatarProps={{ radius: "full", size: "sm", src: "https://i.pravatar.cc/150?u=a042581f4e29026024d" }}
+            avatarProps={{ radius: "full", size: "sm", src: users.find(u => u?.label===cellValue)?.avatar }}
             classNames={{
               description: "text-default-500",
             }}
