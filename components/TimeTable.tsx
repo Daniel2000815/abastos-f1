@@ -333,7 +333,7 @@ export default function TimeTable() {
 
   return (
     <Table
-
+      isCompact={true}
       removeWrapper
       aria-label="Time table"
       bottomContent={bottomContent}
