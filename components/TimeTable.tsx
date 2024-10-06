@@ -47,7 +47,7 @@ const modeColorMap: Record<string, ChipProps["color"]> = {
   "Quali": "warning",
 };
 
-const INITIAL_VISIBLE_COLUMNS = ["user", "date", "time", "track", "mode", "actions"];
+const INITIAL_VISIBLE_COLUMNS = ["user", "date", "time", "track"];
 
 
 export default function TimeTable() {
@@ -196,20 +196,21 @@ export default function TimeTable() {
     return (
       <div className="flex flex-col gap-4">
         <div className="flex justify-between gap-3 items-end">
-          <Input
-            isClearable
-            classNames={{
-              base: "w-full sm:max-w-[44%]",
-              inputWrapper: "border-1",
-            }}
-            placeholder="Search by name or track..."
-            size="sm"
-            startContent={<SearchIcon className="text-default-300" />}
-            value={filterValue}
-            variant="bordered"
-            onClear={() => setFilterValue("")}
-            onValueChange={onSearchChange}
-          />
+        <Input
+  isClearable
+  classNames={{
+    base: "w-full hidden lg:block sm:max-w-[44%]", // Oculta en pantallas pequeñas y muestra en pantallas grandes
+    inputWrapper: "border-1",
+  }}
+  placeholder="Search by name or track..."
+  size="sm"
+  startContent={<SearchIcon className="text-default-300" />}
+  value={filterValue}
+  variant="bordered"
+  onClear={() => setFilterValue("")}
+  onValueChange={onSearchChange}
+/>
+
           <div className="flex gap-3">
             <Dropdown>
               <DropdownTrigger className="hidden sm:flex">
