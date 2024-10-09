@@ -23,7 +23,7 @@ import {
 } from "@nextui-org/react";
 import { useTime } from '@/components/TimeContext';
 
-import { modes, users } from '@/config/static-data';
+import { modes, users, tracks } from '@/config/static-data';
 
 import { VerticalDotsIcon } from "../icons/VerticalDotsIcon";
 import { ChevronDownIcon } from "../icons/ChevronDownIcon";
@@ -42,22 +42,21 @@ const columns = [
 ];
 
 const modeColorMap: Record<string, ChipProps["color"]> = {
-  "Practice": "success",
-  "Race": "danger",
-  "Quali": "warning",
+  "practice": "success",
+  "race": "danger",
+  "quali": "warning",
 };
 
 const INITIAL_VISIBLE_COLUMNS = ["user", "date", "time", "track"];
 
 
-export default function TimeTable() {
-  const { times } = useTime();  // Obtener los tiempos del contexto
+export default function TimeTable(props: any) {
+  const { times, setFilteredTimes } = useTime();  // Obtener los tiempos del contexto
   type User = typeof times[0];
 
   const [filterValue, setFilterValue] = React.useState("");
   const [selectedKeys, setSelectedKeys] = React.useState<Selection>(new Set([]));
   const [visibleColumns, setVisibleColumns] = React.useState<Selection>(new Set(INITIAL_VISIBLE_COLUMNS));
-  const [modeFilter, setModeFilter] = React.useState<Selection>("all");
   const [rowsPerPage, setRowsPerPage] = React.useState(15);
   const [sortDescriptor, setSortDescriptor] = React.useState<SortDescriptor>({
     column: "name",
@@ -84,15 +83,23 @@ export default function TimeTable() {
         [time.user, time.track].map(u => u.toLowerCase()).some(u => u.includes(filterValue.toLowerCase())),
       );
     }
-    if (modeFilter !== "all" && Array.from(modeFilter).length !== modes.length) {
-      console.log(modeFilter , filteredTimes)
+    if (props.modeFilter !== "all" && Array.from(props.modeFilter).length !== modes.length) {
+      console.log(props.modeFilter, filteredTimes)
       filteredTimes = filteredTimes.filter((user) =>
-        Array.from(modeFilter).includes(user.mode.toLowerCase()),
+        Array.from(props.modeFilter).includes(user.mode.toLowerCase()),
       );
     }
 
+    if (props.trackFilter !== "all" && Array.from(props.trackFilter).length !== tracks.length) {
+      console.log("track filter", props.trackFilter, filteredTimes)
+      filteredTimes = filteredTimes.filter((user) =>
+        Array.from(props.trackFilter).includes(user.track.toLowerCase()),
+      );
+    }
+
+    setFilteredTimes(filteredTimes)
     return filteredTimes;
-  }, [times, filterValue, modeFilter]);
+  }, [times, filterValue, props.modeFilter, props.trackFilter]);
 
   const items = React.useMemo(() => {
     const start = (page - 1) * rowsPerPage;
@@ -104,7 +111,7 @@ export default function TimeTable() {
   const sortedItems = React.useMemo(() => {
     return [...items].sort((a: User, b: User) => {
 
-      var first =  a[sortDescriptor.column as keyof User];
+      var first = a[sortDescriptor.column as keyof User];
       var second = b[sortDescriptor.column as keyof User];
 
       const cmp = first < second ? -1 : first > second ? 1 : 0;
@@ -120,12 +127,12 @@ export default function TimeTable() {
       case "user":
         return (
           <User
-            avatarProps={{ radius: "full", size: "sm", src: users.find(u => u?.label===cellValue)?.avatar }}
+            avatarProps={{ radius: "full", size: "sm", src: users.find(u => u?.key === cellValue)?.avatar }}
             classNames={{
               description: "text-default-500",
             }}
             // description={user.date?.toDate().toLocaleString()}
-            name={cellValue}
+            name={users.find(u => u?.key === cellValue)?.label}
           >
             {user.date?.toLocaleString()}
           </User>
@@ -133,7 +140,7 @@ export default function TimeTable() {
       case "track":
         return (
           <div className="flex flex-col">
-            <p className="text-bold text-small capitalize">{cellValue}</p>
+            <p className="text-bold text-small capitalize">{tracks.find(u => u?.key === cellValue)?.label}</p>
             <p className="text-bold text-tiny capitalize text-default-500">Sunny</p>
           </div>
         );
@@ -145,7 +152,7 @@ export default function TimeTable() {
             size="sm"
             variant="dot"
           >
-            {cellValue}
+            {modes.find(u => u?.key === cellValue)?.label}
           </Chip>
         );
       case "actions":
@@ -196,47 +203,23 @@ export default function TimeTable() {
     return (
       <div className="flex flex-col gap-4">
         <div className="flex justify-between gap-3 items-end">
-        <Input
-  isClearable
-  classNames={{
-    base: "w-full hidden lg:block sm:max-w-[44%]", // Oculta en pantallas pequeñas y muestra en pantallas grandes
-    inputWrapper: "border-1",
-  }}
-  placeholder="Search by name or track..."
-  size="sm"
-  startContent={<SearchIcon className="text-default-300" />}
-  value={filterValue}
-  variant="bordered"
-  onClear={() => setFilterValue("")}
-  onValueChange={onSearchChange}
-/>
+          <Input
+            isClearable
+            classNames={{
+              base: "w-full hidden lg:block sm:max-w-[44%]", // Oculta en pantallas pequeñas y muestra en pantallas grandes
+              inputWrapper: "border-1",
+            }}
+            placeholder="Search by name or track..."
+            size="sm"
+            startContent={<SearchIcon className="text-default-300" />}
+            value={filterValue}
+            variant="bordered"
+            onClear={() => setFilterValue("")}
+            onValueChange={onSearchChange}
+          />
 
           <div className="flex gap-3">
-            <Dropdown>
-              <DropdownTrigger className="hidden sm:flex">
-                <Button
-                  endContent={<ChevronDownIcon className="text-small" />}
-                  size="sm"
-                  variant="flat"
-                >
-                  Mode
-                </Button>
-              </DropdownTrigger>
-              <DropdownMenu
-                disallowEmptySelection
-                aria-label="Table Columns"
-                closeOnSelect={false}
-                selectedKeys={modeFilter}
-                selectionMode="multiple"
-                onSelectionChange={setModeFilter}
-              >
-                {modes.map((mode) => (
-                  <DropdownItem key={mode.key} className="capitalize">
-                    {capitalize(mode.label)}
-                  </DropdownItem>
-                ))}
-              </DropdownMenu>
-            </Dropdown>
+
             <Dropdown>
               <DropdownTrigger className="hidden sm:flex">
                 <Button
@@ -283,7 +266,8 @@ export default function TimeTable() {
     );
   }, [
     filterValue,
-    modeFilter,
+    props.modeFilter,
+    props.trackFilter,
     visibleColumns,
     onSearchChange,
     onRowsPerPageChange,

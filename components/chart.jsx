@@ -5,13 +5,13 @@ import { secondsToTimeString } from "@/utils/raceUtils";
 import { useState, useEffect } from 'react';
 
 export const ChartTest = () => {
-  const { times = [] } = useTime();
+  const { filteredTimes = [] } = useTime();
   const [series, setSeries] = useState([]);
   const [categories, setCategories] = useState([]);
 
   useEffect(() => {
     // 1. Extraer fechas únicas y convertirlas a objetos Date para poder ordenarlas
-    const uniqueDates = [...new Set(times.map(t => 
+    const uniqueDates = [...new Set(filteredTimes.map(t => 
       t.date instanceof Date 
         ? t.date.toLocaleDateString() 
         : t.date?.toDate().toLocaleDateString()
@@ -23,7 +23,7 @@ export const ChartTest = () => {
     const bestTimes = {};
 
     // 3. Recorrer los registros para encontrar el mejor tiempo por usuario en cada fecha
-    times.forEach(record => {
+    filteredTimes.forEach(record => {
       const date = record.date instanceof Date 
         ? record.date.toLocaleDateString() 
         : record.date?.toDate().toLocaleDateString();
@@ -39,7 +39,7 @@ export const ChartTest = () => {
       }
     });
 
-    const users = [...new Set(times.map(record => record.user))];
+    const users = [...new Set(filteredTimes.map(record => record.user))];
     const userResults = users.map(user => {
       const data = uniqueDates.map(date => {
         return bestTimes[date] && bestTimes[date][user] !== undefined 
@@ -65,9 +65,9 @@ export const ChartTest = () => {
 
     setSeries(userResults);
     setCategories(uniqueDates); // Guardar las fechas únicas ordenadas
-  }, [times]);
+  }, [filteredTimes]);
 
-  return (
+  return (<>
     <ApexChart
       options={{
         // markers: {
@@ -123,5 +123,6 @@ export const ChartTest = () => {
       type="area"
       width="100%"
     />
+    </>
   )
 }

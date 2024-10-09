@@ -56,12 +56,12 @@ export default function App() {
                 <Dropdown>
                   <DropdownTrigger>
                     <Button variant="bordered">
-                      {user === "" ? "Select pilot" : user}
+                      {user === "" ? "Select pilot" : users.find(u => u.key === user).label}
                     </Button>
                   </DropdownTrigger>
                   <DropdownMenu
                     aria-label="Dynamic Actions"
-                    onAction={(key, val) => setUser(val.value.label)}
+                    onAction={(key, val) => setUser(val.value.key)}
                     items={users}
                   >
                     {(item) => (
@@ -76,12 +76,12 @@ export default function App() {
                 <Dropdown>
                   <DropdownTrigger>
                     <Button variant="bordered">
-                      {track === "" ? "Select circuit" : track}
+                      {track === "" ? "Select circuit" : tracks.find(t => t.key === track).label}
                     </Button>
                   </DropdownTrigger>
                   <DropdownMenu
                     aria-label="Dynamic Actions"
-                    onAction={(key, val) => setTrack(val.value.label)}
+                    onAction={(key, val) => setTrack(val.value.key)}
                     items={tracks}
                   >
                     {(item) => (
@@ -96,12 +96,12 @@ export default function App() {
                 <Dropdown>
                   <DropdownTrigger>
                     <Button variant="bordered">
-                      {mode === "" ? "Select mode" : mode}
+                      {mode === "" ? "Select mode" : modes.find(m => m.key === mode).label}
                     </Button>
                   </DropdownTrigger>
                   <DropdownMenu
                     aria-label="Dynamic Actions"
-                    onAction={(key, val) => setMode(val.value.label)}
+                    onAction={(key, val) => setMode(val.value.key)}
                     items={modes}
                   >
                     {(item) => (

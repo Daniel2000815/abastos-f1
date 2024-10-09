@@ -10,6 +10,7 @@ const TimeContext = createContext();
 // Proveedor del contexto
 export const TimeProvider = ({ children }) => {
   const [times, setTimes] = useState([]);
+  const [filteredTimes, setFilteredTimes] = useState([]);
 
   // Función para añadir un nuevo tiempo
   const addNewTime = async (timeSeconds, user, track, mode, date) => {
@@ -61,7 +62,7 @@ export const TimeProvider = ({ children }) => {
   }, []);
 
   return (
-    <TimeContext.Provider value={{ times, addNewTime }}>
+    <TimeContext.Provider value={{ times, filteredTimes, addNewTime, setFilteredTimes }}>
       {children}
     </TimeContext.Provider>
   );

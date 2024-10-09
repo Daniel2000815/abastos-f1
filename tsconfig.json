@@ -23,6 +23,6 @@
       "@/*": ["./*"]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "components/TimeModal.jsx", "components/TimeTable.jsx", "components/TimeTable.jsx"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "components/TimeModal.jsx", "components/TimeTable.jsx", "components/TimeTable.jsx", "app/page.jsx"],
   "exclude": ["node_modules"]
 }
