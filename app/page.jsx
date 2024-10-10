@@ -21,57 +21,69 @@ import { capitalize } from "../utils/stringUtils";
 // ];
 
 export default function Home() {
-  const [modeFilter, setModeFilter] = useState("all");
-  const [trackFilter, setTrackFilter] = useState(new Set(tracks[0].label));
+  const [selectedTracks, setSelectedTracks] = useState(new Set([tracks[0].key]));
+  const [selectedModes, setSelectedModes] = React.useState(new Set(["quali", "practice", "race"]));
+
+  const selectedModesValue = React.useMemo(
+    () => modes.map(m =>  Array.from(selectedModes).includes(m.key) ? m.label : null).filter(m => m).join(", ").replaceAll("_", " "),
+    [selectedModes]
+  );
+
+  const selectedTrackssValue = React.useMemo(
+    () => tracks.map(m =>  Array.from(selectedTracks).includes(m.key) ? m.label : null).filter(m => m).join(", ").replaceAll("_", " "),
+    [selectedTracks]
+  );
 
   return (
     <TimeProvider>
-      
+
       <section className="flex flex-col items-center justify-center gap-4 py-8 md:py-10">
         {/* Dropdowns */}
-        <div className="flex flex-col xl:flex-row gap-4 w-full justify-between">
-        <Dropdown>
-              <DropdownTrigger className="hidden sm:flex">
-                <Button
-                  endContent={<ChevronDownIcon className="text-small" />}
-                  size="sm"
-                  variant="flat"
-                >
-                  Mode
-                </Button>
-              </DropdownTrigger>
-              <DropdownMenu
-                disallowEmptySelection
-                aria-label="Table Columns"
-                closeOnSelect={false}
-                selectedKeys={modeFilter}
-                selectionMode="multiple"
-                onSelectionChange={setModeFilter}
+        <div className="flex flex-col xl:flex-row gap-4 w-full justify-start">
+     
+          <Dropdown>
+            <DropdownTrigger>
+              <Button
+                variant="flat"
+                className="capitalize"
+                endContent={<ChevronDownIcon className="text-small" />}
               >
-                {modes.map((mode) => (
-                  <DropdownItem key={mode.key} className="capitalize">
-                    {capitalize(mode.label)}
-                  </DropdownItem>
-                ))}
-              </DropdownMenu>
-            </Dropdown>
+                {selectedModesValue}
+              </Button>
+            </DropdownTrigger>
+            <DropdownMenu
+              aria-label="Modes Selection"
+              variant="flat"
+              closeOnSelect={false}
+              disallowEmptySelection
+              selectionMode="multiple"
+              selectedKeys={selectedModes}
+              onSelectionChange={setSelectedModes}
+            >
+              {modes.map((mode) => (
+                <DropdownItem key={mode.key} className="capitalize">
+                  {capitalize(mode.label)}
+                </DropdownItem>
+              ))}
+              
+            </DropdownMenu>
+          </Dropdown>
 
           <Dropdown>
-            <DropdownTrigger className="hidden sm:flex">
+            <DropdownTrigger >
               <Button
                 endContent={<ChevronDownIcon className="text-small" />}
-                size="sm"
-                variant="flat"
+                  variant="flat"
               >
-                Track
+                {selectedTrackssValue}
               </Button>
             </DropdownTrigger>
             <DropdownMenu
               disallowEmptySelection
               aria-label="Track Selection"
               selectionMode="single"
-              selectedKeys={trackFilter}
-              onSelectionChange={setTrackFilter}
+              selectedKeys={selectedTracks}
+              onSelectionChange={setSelectedTracks}
             >
               {tracks.map((track) => (
                 <DropdownItem key={track.key} className="capitalize">
@@ -87,7 +99,7 @@ export default function Home() {
         {/* Contenedor que se mostrará en pantallas extra grandes */}
         <div className="hidden xl:flex gap-10 w-full">
           <div className="w-full xl:w-1/2">
-            <TimeTable modeFilter={modeFilter} trackFilter={trackFilter}/>
+            <TimeTable modeFilter={selectedModes} trackFilter={selectedTracks} />
           </div>
           <div className="w-full xl:w-1/2">
             <ChartTest />
@@ -96,7 +108,7 @@ export default function Home() {
 
         {/* Contenedor que se mostrará solo en pantallas pequeñas */}
         <div className="flex xl:hidden flex-col gap-10 w-full">
-          <TimeTable modeFilter={modeFilter} trackFilter={trackFilter}/>
+          <TimeTable modeFilter={selectedModes} trackFilter={selectedTracks} />
           <ChartTest />
         </div>
       </section>
