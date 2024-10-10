@@ -3,11 +3,14 @@ import ApexChart from "@/components/ApexChart";
 import { useTime } from '@/components/TimeContext';
 import { secondsToTimeString } from "@/utils/raceUtils";
 import { useState, useEffect } from 'react';
+import { useTheme } from "next-themes";
 
 export const ChartTest = () => {
   const { filteredTimes = [] } = useTime();
   const [series, setSeries] = useState([]);
   const [categories, setCategories] = useState([]);
+
+  const { theme, setTheme } = useTheme();
 
   useEffect(() => {
     // 1. Extraer fechas únicas y convertirlas a objetos Date para poder ordenarlas
@@ -91,7 +94,8 @@ export const ChartTest = () => {
         chart: {
           height: 350,
           type: 'area',
-          stacked: false
+          stacked: false,
+          background: theme==="light" ? "#ffffff" : "#0"
         },
         dataLabels: {
           enabled: false
@@ -118,6 +122,10 @@ export const ChartTest = () => {
               : ''; // Si no hay tiempo, no muestra nada
           }
         },
+        theme: {
+          mode: theme, 
+      },
+      
       }}
       series={series}
       type="area"
