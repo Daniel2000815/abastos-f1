@@ -25,7 +25,7 @@ export default function App() {
   let formatter = useDateFormatter({ dateStyle: "full" });
   const [isSaving, setIsSaving] = React.useState(false); // Estado para controlar la subida de datos
 
-  
+
 
   // Función para manejar la acción de guardar
   const handleSave = async (onClose) => {
@@ -86,6 +86,7 @@ export default function App() {
                     aria-label="Dynamic Actions"
                     onAction={(key, val) => setTrack(val.value.key)}
                     items={tracks}
+                    style={{ maxHeight: "200px", overflowY: "auto" }} // Estilos en línea para el scroll
                   >
                     {(item) => (
                       <DropdownItem key={item.key} color={item.key === "delete" ? "danger" : "default"}>
@@ -123,7 +124,7 @@ export default function App() {
                     </Button>
                   </DropdownTrigger>
                   <DropdownMenu variant="faded" onAction={(key, val) => setWeather(val.value.key)} aria-label="Dropdown menu with icons" items={weathers}>
-                  {(item) => (
+                    {(item) => (
                       <DropdownItem key={item.key} startContent={item.icon}>
                         {item.label}
                       </DropdownItem>
@@ -165,7 +166,7 @@ export default function App() {
                   color="primary"
                   onPress={() => handleSave(onClose)}
                   isDisabled={user === "" || track === "" || mode === "" || time <= 0 || weather === "" || !date}
-                  // isDisabled={false}
+                // isDisabled={false}
                 >
                   {isSaving ? <Spinner color="warning" /> : "Save"} {/* Cambia el texto cuando está guardando */}
                 </Button>

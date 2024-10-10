@@ -43,9 +43,93 @@ const tracks = [
     label: "Russia",
   },
   {
-    key: "it",
+    key: "bah",
+    label: "Bahrain",
+  },
+  {
+    key: "jed",
+    label: "Jeddah",
+  },
+  {
+    key: "aus",
+    label: "Australia",
+  },
+  {
+    key: "baku",
+    label: "Baku",
+  },
+  {
+    key: "mia",
+    label: "Miami",
+  },
+  {
+    key: "imo",
+    label: "Imola",
+  },
+  {
+    key: "bar",
+    label: "Barcelona",
+  },
+  {
+    key: "mon",
     label: "Monaco",
   },
+  {
+    key: "can",
+    label: "Canada",
+  },
+  {
+    key: "sil",
+    label: "Silverstone",
+  },
+  {
+    key: "hun",
+    label: "Hungary",
+  },
+  {
+    key: "spa",
+    label: "Spa-Francorchamps",
+  },
+  {
+    key: "zan",
+    label: "Zandvoort",
+  },
+  {
+    key: "cot",
+    label: "Cota",
+  },
+  {
+    key: "sin",
+    label: "Singapore",
+  },
+  {
+    key: "suz",
+    label: "Suzuka",
+  },
+  {
+    key: "lus",
+    label: "Losail",
+  },
+  {
+    key: "aus",
+    label: "Austin (COTA)",
+  },
+  {
+    key: "mex",
+    label: "Mexico City",
+  },
+  {
+    key: "sao",
+    label: "Sao Paulo",
+  },
+  {
+    key: "vegas",
+    label: "Las Vegas",
+  },
+  {
+    key: "yas",
+    label: "Yas Marina (Abu Dhabi)",
+  }
 ];
 
 const modes = [

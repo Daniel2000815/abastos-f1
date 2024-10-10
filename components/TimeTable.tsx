@@ -228,7 +228,7 @@ export default function TimeTable(props: any) {
           <div className="flex gap-3">
 
             <Dropdown>
-              <DropdownTrigger className="hidden sm:flex">
+              <DropdownTrigger >
                 <Button
                   endContent={<ChevronDownIcon className="text-small" />}
                   size="sm"
@@ -297,11 +297,11 @@ export default function TimeTable(props: any) {
           variant="light"
           onChange={setPage}
         />
-        <span className="text-small text-default-400">
+        {/* <span className="text-small text-default-400">
           {selectedKeys === "all"
             ? "All items selected"
             : `${selectedKeys.size} of ${items.length} selected`}
-        </span>
+        </span> */}
       </div>
     );
   }, [selectedKeys, items.length, page, pages, hasSearchFilter]);
