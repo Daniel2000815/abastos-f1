@@ -14,14 +14,13 @@ export const ChartTest = () => {
 
   useEffect(() => {
     // 1. Extraer fechas únicas y convertirlas a objetos Date para poder ordenarlas
-    const uniqueDates = [...new Set(filteredTimes.map(t => 
+    let uniqueDates = [...new Set(filteredTimes.map(t => 
       t.date instanceof Date 
-        ? t.date.toLocaleDateString() 
-        : t.date?.toDate().toLocaleDateString()
-    ))];
+        ? t.date
+        : t.date?.toDate()
+    ).sort((a, b) => a-b).map(d => d.toLocaleDateString()))];
 
     // 2. Ordenar las fechas en orden ascendente
-    uniqueDates.sort((a, b) => new Date(a) - new Date(b));
 
     const bestTimes = {};
 
@@ -125,6 +124,15 @@ export const ChartTest = () => {
         theme: {
           mode: theme, 
       },
+      title: {
+        text: "Best times",
+        align: 'center',
+        margin: 10,
+        offsetX: 0,
+        offsetY: 0,
+        floating: true,
+        
+    }
       
       }}
       series={series}
