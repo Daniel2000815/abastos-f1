@@ -1,4 +1,8 @@
 import { avatar } from "@nextui-org/theme";
+import { SunIcon } from "@/icons/SunIcon";
+import { RainIcon } from "@/icons/rainy-3";
+import { FogIcon } from "@/icons/FogIcon";
+import {WindIcon} from "@/icons/WindIcon";
 
 const users = [
   {
@@ -59,4 +63,26 @@ const modes = [
   },
 ];
 
-export { users, tracks, modes }
+const weathers = [
+  {
+    key: "sun",
+    label: "Sunny",
+    icon: <SunIcon/>
+  },
+  {
+    key: "rain",
+    label: "Rainny",
+    icon: <RainIcon/>
+  },
+  {
+    key: "wind",
+    label: "Windy",
+    icon: <WindIcon/>
+  },
+  {
+    key: "fog",
+    label: "Foggy",
+    icon: <FogIcon/>
+  },
+];
+export { users, tracks, modes, weathers }

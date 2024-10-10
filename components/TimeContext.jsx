@@ -13,13 +13,14 @@ export const TimeProvider = ({ children }) => {
   const [filteredTimes, setFilteredTimes] = useState([]);
 
   // Función para añadir un nuevo tiempo
-  const addNewTime = async (timeSeconds, user, track, mode, date) => {
+  const addNewTime = async (timeSeconds, user, track, mode, weather, date) => {
     try {
         const newTime = {
             user: user,
             time: timeSeconds,
             track: track,
             mode: mode,
+            weather: weather,
             date: date,
         };
 

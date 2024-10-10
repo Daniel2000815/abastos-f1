@@ -14,11 +14,11 @@ export const ChartTest = () => {
 
   useEffect(() => {
     // 1. Extraer fechas únicas y convertirlas a objetos Date para poder ordenarlas
-    let uniqueDates = [...new Set(filteredTimes.map(t => 
-      t.date instanceof Date 
+    let uniqueDates = [...new Set(filteredTimes.map(t =>
+      t.date instanceof Date
         ? t.date
         : t.date?.toDate()
-    ).sort((a, b) => a-b).map(d => d.toLocaleDateString()))];
+    ).sort((a, b) => a - b).map(d => d.toLocaleDateString()))];
 
     // 2. Ordenar las fechas en orden ascendente
 
@@ -26,8 +26,8 @@ export const ChartTest = () => {
 
     // 3. Recorrer los registros para encontrar el mejor tiempo por usuario en cada fecha
     filteredTimes.forEach(record => {
-      const date = record.date instanceof Date 
-        ? record.date.toLocaleDateString() 
+      const date = record.date instanceof Date
+        ? record.date.toLocaleDateString()
         : record.date?.toDate().toLocaleDateString();
       const user = record.user;
       const time = record.time;
@@ -44,8 +44,8 @@ export const ChartTest = () => {
     const users = [...new Set(filteredTimes.map(record => record.user))];
     const userResults = users.map(user => {
       const data = uniqueDates.map(date => {
-        return bestTimes[date] && bestTimes[date][user] !== undefined 
-          ? bestTimes[date][user] 
+        return bestTimes[date] && bestTimes[date][user] !== undefined
+          ? bestTimes[date][user]
           : null; // Mantener null para indicar ausencia de tiempo
       });
 
@@ -94,7 +94,7 @@ export const ChartTest = () => {
           height: 350,
           type: 'area',
           stacked: false,
-          background: theme==="light" ? "#ffffff" : "#0"
+          background: theme === "light" ? "#ffffff" : "#0"
         },
         dataLabels: {
           enabled: false
@@ -116,29 +116,29 @@ export const ChartTest = () => {
         tooltip: {
           shared: true,
           formatter: function (value, { series, seriesIndex, dataPointIndex }) {
-            return value[seriesIndex] !== null && value[seriesIndex] !== undefined 
-              ? secondsToTimeString(value[seriesIndex]) 
+            return value[seriesIndex] !== null && value[seriesIndex] !== undefined
+              ? secondsToTimeString(value[seriesIndex])
               : ''; // Si no hay tiempo, no muestra nada
           }
         },
         theme: {
-          mode: theme, 
-      },
-      title: {
-        text: "Best times",
-        align: 'center',
-        margin: 10,
-        offsetX: 0,
-        offsetY: 0,
-        floating: true,
-        
-    }
-      
+          mode: theme,
+        },
+        title: {
+          text: "Best times",
+          align: 'center',
+          margin: 10,
+          offsetX: 0,
+          offsetY: 0,
+          floating: true,
+
+        }
+
       }}
       series={series}
       type="area"
       width="100%"
     />
-    </>
+  </>
   )
 }

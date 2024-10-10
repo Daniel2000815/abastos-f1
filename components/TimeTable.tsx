@@ -22,8 +22,7 @@ import {
   SortDescriptor,
 } from "@nextui-org/react";
 import { useTime } from '@/components/TimeContext';
-
-import { modes, users, tracks } from '@/config/static-data';
+import { modes, users, tracks, weathers } from '@/config/static-data';
 
 import { VerticalDotsIcon } from "../icons/VerticalDotsIcon";
 import { ChevronDownIcon } from "../icons/ChevronDownIcon";
@@ -47,7 +46,7 @@ const modeColorMap: Record<string, ChipProps["color"]> = {
   "quali": "warning",
 };
 
-const INITIAL_VISIBLE_COLUMNS = ["user", "date", "time", "track"];
+const INITIAL_VISIBLE_COLUMNS = ["user", "track", "time"];
 
 
 export default function TimeTable(props: any) {
@@ -59,8 +58,8 @@ export default function TimeTable(props: any) {
   const [visibleColumns, setVisibleColumns] = React.useState<Selection>(new Set(INITIAL_VISIBLE_COLUMNS));
   const [rowsPerPage, setRowsPerPage] = React.useState(15);
   const [sortDescriptor, setSortDescriptor] = React.useState<SortDescriptor>({
-    column: "name",
-    direction: "descending",
+    column: "time",
+    direction: "ascending",
   });
 
   const [page, setPage] = React.useState(1);
@@ -139,9 +138,17 @@ export default function TimeTable(props: any) {
         );
       case "track":
         return (
-          <div className="flex flex-col">
-            <p className="text-bold text-small capitalize">{tracks.find(u => u?.key === cellValue)?.label}</p>
-            <p className="text-bold text-tiny capitalize text-default-500">Sunny</p>
+          <div className="flex flex-row items-center gap-2">
+            <div>
+              <p className="text-bold text-small capitalize">{tracks.find(u => u?.key === cellValue)?.label}</p>
+
+            </div>
+            <div className="flex-shrink-0">
+              {/* Aquí iría el componente del icono, por ejemplo <WeatherIcon /> */}
+
+              {user.weather ? weathers.find(w => w.key === user.weather)?.icon : ""}
+            </div>
+
           </div>
         );
       case "mode":
@@ -332,6 +339,7 @@ export default function TimeTable(props: any) {
       topContentPlacement="outside"
       onSortChange={setSortDescriptor}
     >
+
       <TableHeader columns={headerColumns}>
         {(column) => (
           <TableColumn

@@ -1,0 +1,33 @@
+@keyframes am-weather-rain {
+    0% {
+      stroke-dashoffset: 0;
+    }
+    100% {
+      stroke-dashoffset: -100;
+    }
+  }
+  
+  .am-weather-rain-1 {
+    animation: am-weather-rain 8s linear infinite;
+  }
+  
+  .am-weather-rain-2 {
+    animation: am-weather-rain 8s linear infinite;
+    animation-delay: 0.25s;
+  }
+  
+  @keyframes am-weather-cloud-2 {
+    0% {
+      transform: translate(0px, 0px);
+    }
+    50% {
+      transform: translate(2px, 0px);
+    }
+    100% {
+      transform: translate(0px, 0px);
+    }
+  }
+  
+  .am-weather-cloud-3 {
+    animation: am-weather-cloud-2 3s linear infinite;
+  }

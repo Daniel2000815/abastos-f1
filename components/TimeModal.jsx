@@ -1,14 +1,14 @@
 import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Button, useDisclosure, Dropdown, DropdownTrigger, DropdownItem, DropdownMenu } from "@nextui-org/react";
 import { PlusIcon } from "../icons/PlusIcon";
 import TimeInput from "@/components/time-input";
-import { users, tracks, modes } from "@/config/static-data";
-import {Spinner} from "@nextui-org/react";
-import {addTime} from "@/utils/dbUtils";
+import { users, tracks, modes, weathers } from "@/config/static-data";
+import { Spinner } from "@nextui-org/react";
+import { addTime } from "@/utils/dbUtils";
 import React from "react";
 import { useTime } from '@/components/TimeContext';
-import {DateInput} from "@nextui-org/react";
-import {DateValue, parseDate, getLocalTimeZone, today} from "@internationalized/date";
-import {useDateFormatter} from "@react-aria/i18n";
+import { DateInput } from "@nextui-org/react";
+import { DateValue, parseDate, getLocalTimeZone, today } from "@internationalized/date";
+import { useDateFormatter } from "@react-aria/i18n";
 
 
 export default function App() {
@@ -18,11 +18,14 @@ export default function App() {
   const [user, setUser] = React.useState("");
   const [track, setTrack] = React.useState("");
   const [mode, setMode] = React.useState("");
+  const [weather, setWeather] = React.useState("");
   const [time, setTime] = React.useState(-1);
-  const [date, setDate] = React.useState(parseDate((new Date()).toISOString().slice(0,10))); // Inicializa DateValue correctamente
+  const [date, setDate] = React.useState(parseDate((new Date()).toISOString().slice(0, 10))); // Inicializa DateValue correctamente
 
-  let formatter = useDateFormatter({dateStyle: "full"});
+  let formatter = useDateFormatter({ dateStyle: "full" });
   const [isSaving, setIsSaving] = React.useState(false); // Estado para controlar la subida de datos
+
+  
 
   // Función para manejar la acción de guardar
   const handleSave = async (onClose) => {
@@ -30,7 +33,7 @@ export default function App() {
 
     try {
       // await uploadData(); // Subir los datos de manera asíncrona
-      await addNewTime(time, user, track, mode, date.toDate());
+      await addNewTime(time, user, track, mode, weather, date.toDate());
       onClose(); // Cerrar el modal al finalizar la subida
     } catch (error) {
       console.error("Error al subir los datos:", error);
@@ -56,7 +59,7 @@ export default function App() {
                 <Dropdown>
                   <DropdownTrigger>
                     <Button variant="bordered">
-                      {user === "" ? "Select pilot" : users.find(u => u.key === user).label}
+                      {user === "" ? "Pilot" : users.find(u => u.key === user).label}
                     </Button>
                   </DropdownTrigger>
                   <DropdownMenu
@@ -76,7 +79,7 @@ export default function App() {
                 <Dropdown>
                   <DropdownTrigger>
                     <Button variant="bordered">
-                      {track === "" ? "Select circuit" : tracks.find(t => t.key === track).label}
+                      {track === "" ? "Circuit" : tracks.find(t => t.key === track).label}
                     </Button>
                   </DropdownTrigger>
                   <DropdownMenu
@@ -96,7 +99,7 @@ export default function App() {
                 <Dropdown>
                   <DropdownTrigger>
                     <Button variant="bordered">
-                      {mode === "" ? "Select mode" : modes.find(m => m.key === mode).label}
+                      {mode === "" ? "Mode" : modes.find(m => m.key === mode).label}
                     </Button>
                   </DropdownTrigger>
                   <DropdownMenu
@@ -111,6 +114,46 @@ export default function App() {
                     )}
                   </DropdownMenu>
                 </Dropdown>
+                <Dropdown>
+                  <DropdownTrigger>
+                    <Button
+                      variant="bordered"
+                    >
+                      {weather === "" ? "Weather" : weathers.find(m => m.key === weather).label}
+                    </Button>
+                  </DropdownTrigger>
+                  <DropdownMenu variant="faded" onAction={(key, val) => setWeather(val.value.key)} aria-label="Dropdown menu with icons" items={weathers}>
+                  {(item) => (
+                      <DropdownItem key={item.key} startContent={item.icon}>
+                        {item.label}
+                      </DropdownItem>
+                    )}
+                    {/* <DropdownItem
+                      key="new"
+                      startContent={<SunIcon  />}
+                    >
+                      Sunny
+                    </DropdownItem>
+                    <DropdownItem
+                      key="copy"
+                      startContent={<RainIcon  />}
+                    >
+                      Rainy
+                    </DropdownItem>
+                    <DropdownItem
+                      key="edit"
+                      startContent={<WindIcon  />}
+                    >
+                      Windy
+                    </DropdownItem>
+                    <DropdownItem
+                      key="delete"
+                      startContent={<FogIcon  />}
+                    >
+                      Foggy
+                    </DropdownItem> */}
+                  </DropdownMenu>
+                </Dropdown>
 
                 <DateInput label="Date" value={date} onChange={setDate} />
               </ModalBody>
@@ -121,10 +164,10 @@ export default function App() {
                 <Button
                   color="primary"
                   onPress={() => handleSave(onClose)}
-                  // isDisabled={user === "" || track === "" || mode === "" || time < 0}
-                  isDisabled={false}
+                  isDisabled={user === "" || track === "" || mode === "" || time <= 0 || weather === "" || !date}
+                  // isDisabled={false}
                 >
-                  {isSaving ? <Spinner color="warning"/> : "Save"} {/* Cambia el texto cuando está guardando */}
+                  {isSaving ? <Spinner color="warning" /> : "Save"} {/* Cambia el texto cuando está guardando */}
                 </Button>
               </ModalFooter>
             </>
