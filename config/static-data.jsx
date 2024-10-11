@@ -71,7 +71,7 @@ const tracks = [
     label: "Barcelona",
   },
   {
-    key: "mon",
+    key: "monaco",
     label: "Monaco",
   },
   {
@@ -111,7 +111,7 @@ const tracks = [
     label: "Losail",
   },
   {
-    key: "aus",
+    key: "austin",
     label: "Austin (COTA)",
   },
   {
@@ -130,7 +130,7 @@ const tracks = [
     key: "yas",
     label: "Yas Marina (Abu Dhabi)",
   }
-];
+].sort((a,b) => a.label.localeCompare(b.label));
 
 const modes = [
   {

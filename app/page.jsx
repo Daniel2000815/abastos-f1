@@ -21,7 +21,7 @@ import { capitalize } from "../utils/stringUtils";
 // ];
 
 export default function Home() {
-  const [selectedTracks, setSelectedTracks] = useState(new Set([tracks[0].key]));
+  const [selectedTracks, setSelectedTracks] = useState(new Set(["mex"]));
   const [selectedModes, setSelectedModes] = React.useState(new Set(["quali", "practice", "race"]));
 
   const selectedModesValue = React.useMemo(
@@ -83,6 +83,7 @@ export default function Home() {
               selectionMode="single"
               selectedKeys={selectedTracks}
               onSelectionChange={setSelectedTracks}
+              style={{ maxHeight: "200px", overflowY: "auto" }}
             >
               {tracks.map((track) => (
                 <DropdownItem key={track.key} className="capitalize">
