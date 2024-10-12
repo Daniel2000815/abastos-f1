@@ -4,27 +4,24 @@ import { useTime } from '@/components/TimeContext';
 import { secondsToTimeString } from "@/utils/raceUtils";
 import { useState, useEffect } from 'react';
 import { useTheme } from "next-themes";
-
+import { users } from "@/config/static-data";
 export const ChartTest = () => {
   const { filteredTimes = [] } = useTime();
   const [series, setSeries] = useState([]);
   const [categories, setCategories] = useState([]);
-
+  const [range, setRange] = useState([0,150])
   const { theme, setTheme } = useTheme();
 
   useEffect(() => {
-    // 1. Extraer fechas únicas y convertirlas a objetos Date para poder ordenarlas
+    // Extraer fechas únicas y convertirlas a objetos Date para ordenarlas
     let uniqueDates = [...new Set(filteredTimes.map(t =>
       t.date instanceof Date
         ? t.date
         : t.date?.toDate()
     ).sort((a, b) => a - b).map(d => d.toLocaleDateString()))];
 
-    // 2. Ordenar las fechas en orden ascendente
-
     const bestTimes = {};
 
-    // 3. Recorrer los registros para encontrar el mejor tiempo por usuario en cada fecha
     filteredTimes.forEach(record => {
       const date = record.date instanceof Date
         ? record.date.toLocaleDateString()
@@ -41,104 +38,108 @@ export const ChartTest = () => {
       }
     });
 
-    const users = [...new Set(filteredTimes.map(record => record.user))];
-    const userResults = users.map(user => {
+    const usersKeys = [...new Set(filteredTimes.map(record => record.user))];
+
+    const userResults = usersKeys.map(user => {
       const data = uniqueDates.map(date => {
         return bestTimes[date] && bestTimes[date][user] !== undefined
           ? bestTimes[date][user]
-          : null; // Mantener null para indicar ausencia de tiempo
+          : null;
       });
 
-      // Manejo de valores previos para conectar puntos
       const finalData = [];
       let lastValidTime = null;
 
       data.forEach((value, index) => {
         if (value !== null) {
-          lastValidTime = value; // Guarda el último valor válido
-          finalData[index] = value; // Usa el valor actual
+          lastValidTime = value;
+          finalData[index] = value;
         } else {
-          finalData[index] = lastValidTime; // Usa el último valor válido
+          finalData[index] = lastValidTime;
         }
       });
 
-      return { name: user, data: finalData }; // Devuelve el resultado con los tiempos procesados
+      // Si el usuario solo tiene un tiempo y es el último, asignar ese valor al penúltimo
+      // if (finalData.filter(val => val !== null).length === 1 && finalData[finalData.length - 1] !== null) {
+      //   finalData[finalData.length - 2] = finalData[finalData.length - 1];
+      // }
+
+      return {
+        name: users.find(u => u.key===user)?.label,
+        data: finalData,
+        type: finalData.filter(u => u).length > 1 ? "area" : "bar"
+      };
     });
 
+    let flatTimes = userResults.map(u => u.data).flat().filter(u => u);
+
+    setRange([Math.min.apply(Math, flatTimes) - 0.5, Math.max.apply(Math, flatTimes) + 0.5]);
     setSeries(userResults);
-    setCategories(uniqueDates); // Guardar las fechas únicas ordenadas
+    setCategories(uniqueDates);
   }, [filteredTimes]);
 
-  return (<>
-    <ApexChart
-      options={{
-        // markers: {
-        //   size: 10,
-        //   colors: undefined,
-        //   strokeColors: '#fff',
-        //   strokeWidth: 2,
-        //   strokeOpacity: 0.9,
-        //   strokeDashArray: 0,
-        //   fillOpacity: 1,
-        //   discrete: [],
-        //   shape: "circle",
-        //   offsetX: 0,
-        //   offsetY: 0,
-        //   showNullDataPoints: false, // Desactiva la visualización de puntos nulos
-        //   hover: {
-        //     size: undefined,
-        //     sizeOffset: 3
-        //   }
-        // },
-        chart: {
-          height: 350,
-          type: 'area',
-          stacked: false,
-          background: theme === "light" ? "#ffffff" : "#0"
-        },
-        dataLabels: {
-          enabled: false
-        },
-        stroke: {
-          curve: 'smooth'
-        },
-        xaxis: {
-          categories: categories
-        },
-        yaxis: {
-          min: 0,
-          labels: {
-            formatter: function (value) {
-              return value === null ? "No registrado" : secondsToTimeString(value);
+  return (
+    <>
+      <ApexChart
+        options={{
+          chart: {
+            height: 350,
+            stacked: false,
+            background: theme === "light" ? "#ffffff" : "#0",
+            type: "line" // Cambia a "line" para permitir gráficos mixtos
+          },
+          dataLabels: {
+            enabled: false
+          },
+          stroke: {
+            curve: 'smooth',
+            lineCap: "butt",
+            width: 6 // Ajusta el grosor del borde del área (3px en este caso)
+          },
+          fill: {
+            type: 'gradient',
+            gradient: {
+              shade: theme,
+              type: "vertical", // Define el gradiente como vertical
+              shadeIntensity: 1,
+              inverseColors: false,
+              opacityFrom: 0.9, // Transparencia en la parte superior
+              opacityTo: 0.5, // Transparencia cerca del eje X
+              stops: [40, 100]
             }
+          },
+          xaxis: {
+            categories: categories
+          },
+          yaxis: {
+            min: range[0],
+            max: range[1],
+            labels: {
+              formatter: function (value) {
+                return value === null ? "No registrado" : secondsToTimeString(value);
+              }
+            }
+          },
+          tooltip: {
+            shared: true,
+            intersect: false,
+          },
+          theme: {
+            mode: theme,
+          },
+          title: {
+            text: "Best times",
+            align: 'center',
+            margin: 10,
+            offsetX: 0,
+            offsetY: 0,
+            floating: true
           }
-        },
-        tooltip: {
-          shared: true,
-          formatter: function (value, { series, seriesIndex, dataPointIndex }) {
-            return value[seriesIndex] !== null && value[seriesIndex] !== undefined
-              ? secondsToTimeString(value[seriesIndex])
-              : ''; // Si no hay tiempo, no muestra nada
-          }
-        },
-        theme: {
-          mode: theme,
-        },
-        title: {
-          text: "Best times",
-          align: 'center',
-          margin: 10,
-          offsetX: 0,
-          offsetY: 0,
-          floating: true,
-
-        }
-
-      }}
-      series={series}
-      type="area"
-      width="100%"
-    />
-  </>
-  )
-}
+        }}
+        series={series}
+        type="line"
+        width="100%"
+      />
+    </>
+  );
+};

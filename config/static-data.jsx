@@ -25,7 +25,6 @@ const users = [
     label: "Pabloca",
     avatar: "https://api.dicebear.com/9.x/bottts-neutral/svg?seed=Luis"
   },
-  ,
   {
     key: "jav",
     label: "Seon",
